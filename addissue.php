@@ -9,7 +9,7 @@ if($action) {
 	$idproj = w2PgetParam($_POST, 'issue_project', '');
 	$userid = $AppUI->user_id;
 
-		
+	$link = "NONE" ;
 	if( $action == 'add' ) {
 		// first retrieve username
 		$query1= "SELECT user_username FROM users WHERE user_id = '$userid' " ;
@@ -116,14 +116,29 @@ if($action) {
 
 		// connect again to W2P  database
 		db_connect( $w2Pconfig['dbhost'], $w2Pconfig['dbname'],$w2Pconfig['dbuser'], $w2Pconfig['dbpass'], $w2Pconfig['dbpersist'] );
+		
+		// now create the task if required
+		if ( w2PgetConfig( 'mantis_autotask')==ON) {
+			//task_project $idproj,task_name $issue_summary,task_description $issue_description,task_owner $userid,task_created,task_updated
+		
+			$sql = "insert into tasks (task_project,task_name,task_description,task_owner,task_created,task_updated) values ($idproj,'$issue_summary','$issue_description',$userid,NOW(),NOW())";
 
+			$oktask = db_exec($sql) ;
+			$taskid = mysql_insert_id();
+			$sql = "update tasks set task_parent=$taskid where task_id=$taskid";
+			$oktask = db_exec($sql) ;
+			$link = "m=tasks&a=addedit&task_id=";
+			$link .= $taskid ;
+		}
 	}
-	if ($idproj==0){
-		$link= "m=projects&a=view" ;
-	}else{
-		$link= "m=projects&a=view&project_id=" ;
-		$link .= $idproj ;
-	}	
+	if ($link == "NONE"){
+		if ($idproj==0){
+			$link= "m=projects&a=view" ;
+		}else{
+			$link= "m=projects&a=view&project_id=" ;
+			$link .= $idproj ;
+		}
+	}
 	$AppUI->redirect("$link");
 }else {
 	$projectid = $form_vars['projectid'] ;
