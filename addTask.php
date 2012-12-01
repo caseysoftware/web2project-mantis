@@ -1,6 +1,7 @@
 <?php
-$reqVar = '_' . $_SERVER['REQUEST_METHOD'];
-$form_vars = $$reqVar;
+if (!defined('W2P_BASE_DIR')) {
+	die('You should not access this file directly');
+}
 
 $bug_id = (int) w2PgetParam($_REQUEST, 'bugid', 0);
 $project_id = (int) w2PgetParam($_REQUEST, 'projectid', 0);

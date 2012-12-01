@@ -19,13 +19,6 @@ $query = "SELECT  password FROM $t_user_table WHERE username='$f_username'";
 $result = db_query( $query );
 $f_password = db_result( $result );
 
-/*echo $f_password ;
-echo " == ";
-echo $f_username;
-echo " == ";
-echo $f_id;
-die(); 
-*/
 if ( auth_attempt_login( $f_username, $f_password, $f_perm_login ) ) {
 	if ($f_id ==0){
 		print_header_redirect( 'main_page.php' );
@@ -55,15 +48,17 @@ if (user_create ( $f_username,"$hack_pwd", "$email", null,false,true,$f_username
 
 
 function ranpass($len = "8"){
- $pass = NULL;
- for($i=0; $i<$len; $i++) {
-   $char = chr(rand(48,122));
-   while (!ereg("[a-z0-9]", $char)){
-     if($char == $lchar) continue;
-     $char = chr(rand(48,90));
-   }
-   $pass .= $char;
-   $lchar = $char;
- }
- return $pass;
+    $pass = NULL;
+    for ($i=0; $i<$len; $i++) {
+        $char = chr(rand(48,122));
+        while (!ereg("[a-z0-9]", $char)) {
+            if($char == $lchar) {
+                continue;
+            }
+            $char = chr(rand(48,90));
+        }
+        $pass .= $char;
+        $lchar = $char;
+    }
+    return $pass;
 }

@@ -1,11 +1,13 @@
 <?php
+if (!defined('W2P_BASE_DIR')) {
+	die('You should not access this file directly');
+}
 ##
 ## Mantis integration
 ## (c) Copyright 2010
 ## Cas Nuy
 ## www.nuy.info
 ##
-global $project_id, $task_id;
 
 $AppUI->savePlace();
 $titleBlock = new CTitleBlock( 'Mantis', 'mantis_logo_button.gif', $m, "$m.$a" );

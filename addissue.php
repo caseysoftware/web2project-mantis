@@ -1,7 +1,9 @@
 <?php
-$reqVar = '_' . $_SERVER['REQUEST_METHOD'];
-$form_vars = $$reqVar;
-$action = @$_REQUEST["action"];
+if (!defined('W2P_BASE_DIR')) {
+	die('You should not access this file directly');
+}
+
+$action = w2PgetParam($_REQUEST, 'action', '');
 $project_id = (int) w2PgetParam($_REQUEST, 'projectid', 0);
 
 if($action) {
@@ -157,83 +159,79 @@ function mantispass($len = "6") {
 ?>
 
 <form name="AddEdit" method="post">
-<table width="100%" border="0" cellpadding="0" cellspacing="1">
-<input name="action" type="hidden" value="add" >
-<input name="issue_project" type="hidden" value=<?php echo "$project_id";?> >
+    <input name="action" type="hidden" value="add" >
+    <input name="issue_project" type="hidden" value=<?php echo "$project_id";?> >
+    <table width="100%" border="0" cellpadding="0" cellspacing="1">
+        <tr>
+            <td><img src="./modules/mantis/images/mantis_logo_button.gif" alt="" border="0"></td>
+            <td align="left" nowrap="nowrap" width="100%"><h1><?php echo $AppUI->_( 'New Issue' );?></h1></td>
+        </tr>
+    </table>
 
-<tr>
-	<td><img src="./modules/mantis/images/mantis_logo_button.gif" alt="" border="0"></td>
-	<td align="left" nowrap="nowrap" width="100%"><h1><?php echo $AppUI->_( 'New Issue' );?></h1></td>
-</tr>
-</table>
+    <table border="1" cellpadding="4" cellspacing="0" width="98%" class="std">
 
+        <?PHP if ($project_id== 0){ ?>
+        <tr>
+            <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Project' );?>:</td>
+            <td width="60%">
+                <?php
+                $project = new CProject();
+                $tmpprojects = $project->getAllowedProjects($AppUI->user_id);
+                $projects = array();
+                $projects[0] = $AppUI->_('any');
+                foreach($tmpprojects as $proj) {
+                    $projects[$proj['project_id']] = $proj['project_name'];
+                }
 
+                echo arraySelect( $projects, 'issue_project', 'class="text"', $project_id );
+                ?>
+            </td>
+        </tr>
+        <?php }?>
+        <tr>
+            <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Summary' );?>:</td>
+            <td width="80%">
+                <input name="issue_summary" class="text" size="128" ></input>
+            </td>
+        </tr>
 
-<table border="1" cellpadding="4" cellspacing="0" width="98%" class="std">
+        <tr>
+            <td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Description' );?>:</td>
+            <td width="80%">
+                <textarea name="issue_description" class="textarea" cols="128" rows="5" wrap="virtual"></textarea>
+            </td>
+        </tr>
 
-<?PHP if ($project_id== 0){ ?>
-<tr>
-	<td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Project' );?>:</td>
-	<td width="60%">
-<?php
-// pull the projects list
-$q = new DBQuery;
-$q->addTable('projects');
-$q->addQuery('project_id, project_name');
-$q->addOrder('project_name');
-$projects = arrayMerge( array( 0 => '('.$AppUI->_('any', UI_OUTPUT_RAW).')' ), $q->loadHashList() );
-echo arraySelect( $projects, 'issue_project', 'class="text"', $project_id );
-?>
-	</td>
-</tr>
-<?php }?>
-<tr>
-	<td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Summary' );?>:</td>
-	<td width="80%">
-		<input name="issue_summary" class="text" size="128" ></input>
-	</td>
-</tr>
+        <tr >
+            <td align="right" width="60%">
+                <?php echo $AppUI->_( 'Create Task' );?>
+            </td>
+            <td  width="40%">
+                <label><input type="radio" name='create_task' value="1" <?php echo( ON == w2PgetConfig( 'mantis_autotask') ) ? 'checked="checked" ' : ''?>/>
+                <?php echo $AppUI->_( 'Yes' );?></label>
+                <label><input type="radio" name='create_task' value="0" <?php echo( OFF == w2PgetConfig( 'mantis_autotask') )? 'checked="checked" ' : ''?>/>
+                <?php echo $AppUI->_( 'No' );?></label>
+            </td>
+        </tr> 
+    </table>
 
-<tr>
-	<td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Description' );?>:</td>
-	<td width="80%">
-		<textarea name="issue_description" class="textarea" cols="128" rows="5" wrap="virtual"></textarea>
-	</td>
-</tr>
-
-<tr >
-<td align="right" width="60%">
-<?php echo $AppUI->_( 'Create Task' );?>
-</td>
-<td  width="40%">
-<label><input type="radio" name='create_task' value="1" <?php echo( ON == w2PgetConfig( 'mantis_autotask') ) ? 'checked="checked" ' : ''?>/>
-<?php echo $AppUI->_( 'Yes' );?></label>
-
-<label><input type="radio" name='create_task' value="0" <?php echo( OFF == w2PgetConfig( 'mantis_autotask') )? 'checked="checked" ' : ''?>/>
-<?php echo $AppUI->_( 'No' );?></label>
-</td>
-</tr> 
-
-
-<table border="0" cellspacing="0" cellpadding="3" width="98%">
-<tr>
-	<td height="40" width="30%">&nbsp;</td>
-	<td  height="40" width="35%" align="right">
-		<table>
-		<tr>
-			<td>
-			<input class="button"  type="button" value="<?php echo $AppUI->_('Cancel');?>" onclick="javascript:history.back(-1);" /> 
-			</td>
-			<td>
-				<input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>" onClick="submit()">
-			</td>
-		</tr>
-		</table>
-	</td>
-</tr>
-</table>
-
-</table>
+    <table border="0" cellspacing="0" cellpadding="3" width="98%">
+        <tr>
+            <td height="40" width="30%">&nbsp;</td>
+            <td  height="40" width="35%" align="right">
+                <table>
+                <tr>
+                    <td>
+                    <input class="button"  type="button" value="<?php echo $AppUI->_('Cancel');?>" onclick="javascript:history.back(-1);" /> 
+                    </td>
+                    <td>
+                        <input class="button" type="button" name="btnFuseAction" value="<?php echo $AppUI->_('save'); ?>" onClick="submit()">
+                    </td>
+                </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </form>
 </body>
 </html>
