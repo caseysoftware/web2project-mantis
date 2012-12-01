@@ -3,7 +3,7 @@
 // MODULE CONFIGURATION DEFINITION
 $config = array();
 $config['mod_name'] = 'Mantis';
-$config['mod_version'] = '2.1.0';
+$config['mod_version'] = '2.1.1';
 $config['mod_directory'] = 'mantis';
 $config['mod_setup_class'] = 'SMantis';
 $config['mod_type'] = 'user';
@@ -17,15 +17,15 @@ if (@$a == 'setup') {
 
 class SMantis {   
 
-	function install() {
-		return null;
+	public function install() {
+		return true;
 	}
 	
-	function remove() {
-		return null;
+	public function remove() {
+		return true;
 	}
 	
-	function upgrade() {
-		return null;
+	public function upgrade() {
+		return true;
 	}
 }

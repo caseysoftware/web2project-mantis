@@ -154,7 +154,7 @@ while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
 	$bugsummary= trim($row2[1]);
 	$bugdesc= trim($row2[2]);
 	$buguser= trim($row2[3]);
-	$bugdate= trim($row2[4]);
+	$bugdate= date("d-M-Y" ,trim($row2[4]));
 	$bugstat= trim($row2[5]);
 
 	switch ($bugstat) {
