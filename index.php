@@ -17,7 +17,7 @@ $user = new CUser();
 $user->load($AppUI->user_id);
 $username = $user->user_username;
 
-$query2= "SELECT method_value FROM contacts_methods WHERE method_name='email_primary' and contact_id = '$userid' " ;
+$query2= "SELECT method_value FROM contacts_methods WHERE method_name='email_primary' and contact_id = " . $AppUI->user_id;
 $result2 = mysql_query( $query2 )or die(mysql_error());
 while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
 	$email= $row2[0];

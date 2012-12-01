@@ -2,32 +2,31 @@
 $reqVar = '_' . $_SERVER['REQUEST_METHOD'];
 $form_vars = $$reqVar;
 $action = @$_REQUEST["action"];
+$project_id = (int) w2PgetParam($_REQUEST, 'projectid', 0);
+
 if($action) {
 	$issue_summary = w2PgetParam($_POST, 'issue_summary', '');
 	$issue_description = w2PgetParam($_POST, 'issue_description', '');
-	$idproj = w2PgetParam($_POST, 'issue_project', '');
+    $project_id = (int) w2PgetParam($_REQUEST, 'issue_project', 0);
 	$create_task = w2PgetParam($_POST, 'create_task', '');
-	$userid = $AppUI->user_id;
 
 	$link = "NONE" ;
 	if( $action == 'add' ) {
 		// first retrieve username
-		$query1= "SELECT user_username FROM users WHERE user_id = '$userid' " ;
-		$result1 = mysql_query( $query1 )or die(mysql_error());
-		while ($row1 = mysql_fetch_array($result1, MYSQL_NUM)) {
-			$username = $row1[0];
-		}
-		$query1= "SELECT method_value FROM contacts_methods WHERE method_name='email_primary' and contact_id = '$userid' " ;
+        $user = new CUser();
+        $user->load($AppUI->user_id);
+        $username = $user->user_username;
+        
+		$query1= "SELECT method_value FROM contacts_methods WHERE method_name='email_primary' and contact_id = " . $AppUI->user_id;
 		$result1 = mysql_query( $query1 )or die(mysql_error());
 		while ($row1 = mysql_fetch_array($result1, MYSQL_NUM)) {
 			$email= $row1[0];
 		}
 		// next retrieve projectname
-		$query2= "SELECT project_name FROM projects WHERE project_id = '$idproj' " ;
-		$result2 = mysql_query( $query2 )or die(mysql_error());
-		while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
-			$projname = $row2[0];
-		}
+        $project = new CProject();
+        $project->load($project_id);
+        $projname = $project->project_name;
+
 		// first connect to the correct database
 		db_connect( $w2Pconfig['mantis_dbhost'], $w2Pconfig['mantis_dbname'],$w2Pconfig['mantis_dbuser'], $w2Pconfig['mantis_dbpass'], $w2Pconfig['dbpersist'] );
 		// get the definitions
@@ -45,13 +44,13 @@ if($action) {
 		// next get the mantis project id based upon the name of project or task
 		if ($mantislink == "A"){
 			$proj  = $prefix ;
-			$proj .= $idproj ;
+			$proj .= $project_id ;
 			$proj .= ' '  ;
 			$proj .= $projname ;
 		} else {
 			// connect to the DP database
 			db_connect( $w2Pconfig['dbhost'], $w2Pconfig['dbname'],$w2Pconfig['dbuser'], $w2Pconfig['dbpass'], $w2Pconfig['dbpersist'] );
-			$query3="select value_charvalue from custom_fields_values,custom_fields_struct where value_object_id=$idproj and value_field_id=field_id and field_name='Mantis' ";
+			$query3="select value_charvalue from custom_fields_values,custom_fields_struct where value_object_id=$project_id and value_field_id=field_id and field_name='Mantis' ";
 			$result3 = mysql_query( $query3 )or die(mysql_error());
 			//  connect to the mantis database
 			db_connect( $w2Pconfig['mantis_dbhost'], $w2Pconfig['mantis_dbname'],$w2Pconfig['mantis_dbuser'], $w2Pconfig['mantis_dbpass'], $w2Pconfig['dbpersist'] );
@@ -119,51 +118,48 @@ if($action) {
 		
 		// now create the task if required
 		if ( $create_task == 1) {
-			//task_project $idproj,task_name $issue_summary,task_description $issue_description,task_owner $userid,task_created,task_updated
-		
-			$sql = "insert into tasks (task_project,task_name,task_description,task_owner,task_created,task_updated) values ($idproj,'$issue_summary','$issue_description',$userid,NOW(),NOW())";
+            $task = new CTask();
+            $task->task_name = $issue_summary;
+            $task->task_project = $project_id;
+            $task->task_description = $issue_description;
+            $task->task_owner = $AppUI->user_id;
+            $task->store();
 
-			$oktask = db_exec($sql) ;
-			$taskid = mysql_insert_id();
-			$sql = "update tasks set task_parent=$taskid where task_id=$taskid";
-			$oktask = db_exec($sql) ;
-			$link = "m=tasks&a=addedit&task_id=";
-			$link .= $taskid ;
+            $link = "m=tasks&a=addedit&task_id=" . $task->task_id;
 		}
 	}
 	if ($link == "NONE"){
-		if ($idproj==0){
-			$link= "m=projects&a=view" ;
+		if ($project_id==0){
+			$link = "m=projects&a=view" ;
 		}else{
-			$link= "m=projects&a=view&project_id=" ;
-			$link .= $idproj ;
+			$link= "m=projects&a=view&project_id=" . $project_id ;
 		}
 	}
 	$AppUI->redirect("$link");
-}else {
-	$projectid = $form_vars['projectid'] ;
 }
 
-function mantispass($len = "6"){
-	$pass = NULL;
-	for($i=0; $i<$len; $i++) {
-		$char = chr(rand(48,122));
-		while (!ereg("[a-zA-Z0-9]", $char)){
-			if($char == $lchar) continue;
-				$char = chr(rand(48,90));
-			}
-			$pass .= $char;
-			$lchar = $char;
-		}
-	return $pass;
-	}
+function mantispass($len = "6") {
+    $pass = NULL;
+    for ($i=0; $i<$len; $i++) {
+        $char = chr(rand(48,122));
+        while (!ereg("[a-zA-Z0-9]", $char)){
+            if ($char == $lchar) {
+                continue;
+            }
+            $char = chr(rand(48,90));
+        }
+        $pass .= $char;
+        $lchar = $char;
+    }
+    return $pass;
+}
 
 ?>
 
 <form name="AddEdit" method="post">
 <table width="100%" border="0" cellpadding="0" cellspacing="1">
 <input name="action" type="hidden" value="add" >
-<input name="issue_project" type="hidden" value=<?php echo "$projectid";?> >
+<input name="issue_project" type="hidden" value=<?php echo "$project_id";?> >
 
 <tr>
 	<td><img src="./modules/mantis/images/mantis_logo_button.gif" alt="" border="0"></td>
@@ -175,7 +171,7 @@ function mantispass($len = "6"){
 
 <table border="1" cellpadding="4" cellspacing="0" width="98%" class="std">
 
-<?PHP if ($projectid== 0){ ?>
+<?PHP if ($project_id== 0){ ?>
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Project' );?>:</td>
 	<td width="60%">
@@ -186,10 +182,10 @@ $q->addTable('projects');
 $q->addQuery('project_id, project_name');
 $q->addOrder('project_name');
 $projects = arrayMerge( array( 0 => '('.$AppUI->_('any', UI_OUTPUT_RAW).')' ), $q->loadHashList() );
-echo arraySelect( $projects, 'issue_project', 'class="text"', $issue_project );
+echo arraySelect( $projects, 'issue_project', 'class="text"', $project_id );
 ?>
 	</td>
-</tr> 
+</tr>
 <?php }?>
 <tr>
 	<td align="right" nowrap="nowrap"><?php echo $AppUI->_( 'Summary' );?>:</td>
