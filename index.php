@@ -29,6 +29,7 @@ while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
 	$email= $row2[0];
 }
 
+
 ?>
 <table width="100%" cellspacing="1" cellpadding="0" border="0">
 <tr>
@@ -65,6 +66,7 @@ $prefix =  w2PgetConfig( 'mantis_w2p_pref') ;
 $mantisprefix =  w2PgetConfig( 'mantis_prefix') ;
 
 $mantislink =  w2PgetConfig( 'mantis_link') ;
+$mantistime =  w2PgetConfig( 'mantis_time') ;
 
 $mantis_bug_table = $mantisprefix ;
 $mantis_bug_table .= '_bug_table'  ;
@@ -133,7 +135,7 @@ if ($idprj !=0 or $project_id>0){
 	$query2 .= "FROM $mantis_bug_table,$mantis_bug_text_table,$mantis_user_table, $mantis_project_table ";
 	$query2 .= "WHERE $mantis_bug_table.project_id=$mantis_project_table.id and $mantis_project_table.name like '$proj1'  and " ;
 	$query2 .= "$mantis_bug_table.id= $mantis_bug_text_table.id and ";
-	$query2 .= "reporter_id= $mantis_user_table.id ";
+	$query2 .= "reporter_id= $mantis_user_table.id order by date_submitted";
 }
 
 $result2 = mysql_query( $query2 )or die(mysql_error());
@@ -154,7 +156,7 @@ while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
 	$bugsummary= trim($row2[1]);
 	$bugdesc= trim($row2[2]);
 	$buguser= trim($row2[3]);
-	$bugdate= date("d-M-Y" ,trim($row2[4]));
+	$bugdate= date("d-M-Y H:i:s" ,trim($row2[4]));
 	$bugstat= trim($row2[5]);
 
 	switch ($bugstat) {
