@@ -1,12 +1,12 @@
 <?php
 $reqVar = '_' . $_SERVER['REQUEST_METHOD'];
 $form_vars = $$reqVar;
-
 $action = @$_REQUEST["action"];
 if($action) {
 	$issue_summary = w2PgetParam($_POST, 'issue_summary', '');
 	$issue_description = w2PgetParam($_POST, 'issue_description', '');
 	$idproj = w2PgetParam($_POST, 'issue_project', '');
+	$create_task = w2PgetParam($_POST, 'create_task', '');
 	$userid = $AppUI->user_id;
 
 	$link = "NONE" ;
@@ -118,7 +118,7 @@ if($action) {
 		db_connect( $w2Pconfig['dbhost'], $w2Pconfig['dbname'],$w2Pconfig['dbuser'], $w2Pconfig['dbpass'], $w2Pconfig['dbpersist'] );
 		
 		// now create the task if required
-		if ( w2PgetConfig( 'mantis_autotask')==ON) {
+		if ( $create_task == 1) {
 			//task_project $idproj,task_name $issue_summary,task_description $issue_description,task_owner $userid,task_created,task_updated
 		
 			$sql = "insert into tasks (task_project,task_name,task_description,task_owner,task_created,task_updated) values ($idproj,'$issue_summary','$issue_description',$userid,NOW(),NOW())";
@@ -205,6 +205,18 @@ echo arraySelect( $projects, 'issue_project', 'class="text"', $issue_project );
 	</td>
 </tr>
 
+<tr >
+<td align="right" width="60%">
+<?php echo $AppUI->_( 'Create Task' );?>
+</td>
+<td  width="40%">
+<label><input type="radio" name='create_task' value="1" <?php echo( ON == w2PgetConfig( 'mantis_autotask') ) ? 'checked="checked" ' : ''?>/>
+<?php echo $AppUI->_( 'Yes' );?></label>
+
+<label><input type="radio" name='create_task' value="0" <?php echo( OFF == w2PgetConfig( 'mantis_autotask') )? 'checked="checked" ' : ''?>/>
+<?php echo $AppUI->_( 'No' );?></label>
+</td>
+</tr> 
 
 
 <table border="0" cellspacing="0" cellpadding="3" width="98%">

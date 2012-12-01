@@ -19,6 +19,13 @@ $query = "SELECT  password FROM $t_user_table WHERE username='$f_username'";
 $result = db_query( $query );
 $f_password = db_result( $result );
 
+/*echo $f_password ;
+echo " == ";
+echo $f_username;
+echo " == ";
+echo $f_id;
+die(); 
+*/
 if ( auth_attempt_login( $f_username, $f_password, $f_perm_login ) ) {
 	if ($f_id ==0){
 		print_header_redirect( 'main_page.php' );

@@ -42,3 +42,8 @@ $w2Pconfig['mantis_login'] = PLAIN ;
 
 // where is Mantis installed, just need the relative path without thrailing slash
 $w2Pconfig['mantis_path'] = "/mantis" ;
+
+// Autocreate task of issue (a mantis issue created from within W2P, also becomes a task)
+$w2Pconfig['mantis_autotask'] = ON ;
+
+

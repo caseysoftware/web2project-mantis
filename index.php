@@ -60,6 +60,20 @@ $link .= "</a>";
 return $link;
 }
 
+function transform_issue($summary,$desc,$bugid)
+{
+global $project_id;
+
+$link  = "<a href=" ;
+$link .= "index.php?m=mantis&a=addTask&projectid=";
+$link .= $project_id ;
+$link .= "&bugid=";
+$link .= $bugid ;
+$link .= ">";
+$link .= $bugid ;
+$link .= "</a>";
+return $link;
+}
 
 // get the definitions
 $prefix =  w2PgetConfig( 'mantis_w2p_pref') ;
@@ -193,7 +207,7 @@ while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
 ?>
 
 <tr>
-	<td><?php echo $bugid ?></td>
+	<td><?php echo transform_issue($bugsummary,$bugdesc,$bugid) ?></td>
 	<td><?php echo $bugdate ?></td>
 	<td><?php echo $buguser ?></td>
 	<td><strong><b><font color=<?php echo "$status_color";?>>

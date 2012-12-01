@@ -1,9 +1,9 @@
-W2P-mantis 0.9
+W2P-mantis 2.2.3
 
 How to install this Integration between web2Project and Mantis ?
 
 Versions tested:
-Web2Project 1.2
+Web2Project 2.2
 Mantis 1.2.0
 
 1. Copy the contents of this package into the root of your Web2Project installation.
@@ -64,6 +64,3 @@ For the issue the following items are recorded :
 6. Date-last-updated
 All other activity is left within Mantis.
 
-
-ToDo:
-1. Verifying other password encryptions than just PLAIN
