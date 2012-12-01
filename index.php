@@ -23,7 +23,7 @@ $result1 = mysql_query( $query1 )or die(mysql_error());
 while ($row1 = mysql_fetch_array($result1, MYSQL_NUM)) {
 	$username = $row1[0];
 }
-$query2= "SELECT contact_email FROM contacts WHERE contact_id = '$userid' " ;
+$query2= "SELECT method_value FROM contacts_methods WHERE method_name='email_primary' and contact_id = '$userid' " ;
 $result2 = mysql_query( $query2 )or die(mysql_error());
 while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
 	$email= $row2[0];
