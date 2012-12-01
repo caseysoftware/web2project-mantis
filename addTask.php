@@ -33,11 +33,12 @@ $summary .= $bugid;
 $summary .= " )";
 
 // now create the task 
-$sql = "insert into tasks (task_project,task_name,task_description,task_owner,task_created,task_updated) values ($projectid,'$summary','$description',$userid,NOW(),NOW())";
-$oktask = db_exec($sql) ;
-$taskid = mysql_insert_id();
-$sql = "update tasks set task_parent=$taskid where task_id=$taskid";
-$oktask = db_exec($sql) ;
-$link = "m=tasks&a=addedit&task_id=";
-$link .= $taskid ;
+$task = new CTask();
+$task->task_name = $summary;
+$task->task_project = $projectid;
+$task->task_description = $description;
+$task->task_owner = $userid;
+$task->store();
+
+$link = "m=tasks&a=addedit&task_id=" . $task->task_id;
 $AppUI->redirect("$link");

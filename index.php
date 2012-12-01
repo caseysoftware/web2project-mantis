@@ -11,24 +11,17 @@ $AppUI->savePlace();
 $titleBlock = new CTitleBlock( 'Mantis', 'mantis_logo_button.gif', $m, "$m.$a" );
 $titleBlock->show();
 
-$project_id = 0;
-if (!empty($_REQUEST['project_id'])) {
-	$project_id = $_REQUEST['project_id'];
-}
+$project_id = (int) w2PgetParam($_REQUEST, 'project_id', 0);
 
+$user = new CUser();
+$user->load($AppUI->user_id);
+$username = $user->user_username;
 
-$userid = $AppUI->user_id;
-$query1= "SELECT user_username FROM users WHERE user_id = '$userid' " ;
-$result1 = mysql_query( $query1 )or die(mysql_error());
-while ($row1 = mysql_fetch_array($result1, MYSQL_NUM)) {
-	$username = $row1[0];
-}
 $query2= "SELECT method_value FROM contacts_methods WHERE method_name='email_primary' and contact_id = '$userid' " ;
 $result2 = mysql_query( $query2 )or die(mysql_error());
 while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
 	$email= $row2[0];
 }
-
 
 ?>
 <table width="100%" cellspacing="1" cellpadding="0" border="0">
@@ -106,13 +99,10 @@ if ($mantislink=="A"){
 		$proj = $row3[0] ;
 	}
 	if (!$proj){
-		// next retrieve projectname
-		$query2= "SELECT project_name FROM projects WHERE project_id = '$project_id' " ;
-		$result2 = mysql_query( $query2 )or die(mysql_error());
-		while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
-			$projname = $row2[0];
-		}
-		$proj = $projname;
+        $project = new CProject();
+        $project->load($project_id);
+        $projname = $project->project_name;
+        $proj = $project->project_name;
 	}
 }
 
