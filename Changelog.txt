@@ -1,0 +1,8 @@
+Version 2.1.0
+This version is geared towards version 2.1 of W2P
+Reason for update is different handling of contacts in this version.
+Version explanation:
+X.Y.Z
+X = main version W2P
+Y = Second level W2P
+Z = Version of module

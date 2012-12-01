@@ -1,0 +1,44 @@
+// Is mantis link active ?
+$w2Pconfig['mantis'] = ON;
+
+
+// Autmatic or by  Custom field (A/C)
+$w2Pconfig['mantis_link'] = 'C';
+
+// Prefix for Mantis projects in case of Automatic
+// Naming convention for w2Pprojects:
+// Prefix + W2P projectid
+$w2Pconfig['mantis_w2p_pref'] = 'W2P';
+
+// Users:
+// Copy users if not exist (1)
+// Use defined user (2)
+$w2Pconfig['mantis_usertype'] = 1;
+$w2Pconfig['mantis_defuser'] = 'Administrator';
+$w2Pconfig['mantis_role'] = 'DEVELOPER';
+$w2Pconfig['mantis_mail'] = ON;
+
+// Users:
+// Role to log issues
+$w2Pconfig['w2p_role'] = 'DEVELOPER';
+
+//
+// Connectionstrings for Mantis 
+// see config_inc.php within your mantis installation
+//
+$w2Pconfig['mantis_dbtype'] = "mysql";
+$w2Pconfig['mantis_dbhost'] = "localhost";
+$w2Pconfig['mantis_dbname'] = "mantis";
+$w2Pconfig['mantis_dbuser'] = "root";
+$w2Pconfig['mantis_dbpass'] = "";
+// Prefix for your mantis tables
+$w2Pconfig['mantis_prefix'] = "mantis" ;
+
+//
+// How is mantis password encryption setup
+// see config_inc.php or config_inc_defaults.php within your mantis installation
+//
+$w2Pconfig['mantis_login'] = PLAIN ;
+
+// where is Mantis installed, just need the relative path without thrailing slash
+$w2Pconfig['mantis_path'] = "/mantis" ;
