@@ -41,38 +41,38 @@ while ($row2 = mysql_fetch_array($result2, MYSQL_NUM)) {
 
 function show_issue($summary,$bugid,$username,$email)
 {
-$mantispath =  w2PgetConfig( 'mantis_path') ;
-$parm = $username ;
-$parm .="||";
-$parm .= $bugid;
-$parm .="||";
-$parm .= $email;
-$parm .="||";
-$parm = base64_encode($parm) ;
-$link  = "<a href=" ;
-$link .= $mantispath ;
-$link .= "/index_dp.php?parm=";
-$link .= $parm ;
-$link .= " target=_blank";
-$link .= ">";
-$link .= $summary ;
-$link .= "</a>";
-return $link;
+    $mantispath =  w2PgetConfig( 'mantis_path') ;
+    $parm = $username ;
+    $parm .="||";
+    $parm .= $bugid;
+    $parm .="||";
+    $parm .= $email;
+    $parm .="||";
+    $parm = base64_encode($parm) ;
+    $link  = "<a href=" ;
+    $link .= $mantispath ;
+    $link .= "/index_dp.php?parm=";
+    $link .= $parm ;
+    $link .= " target=_blank";
+    $link .= ">";
+    $link .= $summary ;
+    $link .= "</a>";
+    return $link;
 }
 
 function transform_issue($summary,$desc,$bugid)
 {
-global $project_id;
+    global $project_id;
 
-$link  = "<a href=" ;
-$link .= "index.php?m=mantis&a=addTask&projectid=";
-$link .= $project_id ;
-$link .= "&bugid=";
-$link .= $bugid ;
-$link .= ">";
-$link .= $bugid ;
-$link .= "</a>";
-return $link;
+    $link  = "<a href=" ;
+    $link .= "index.php?m=mantis&a=addTask&projectid=";
+    $link .= $project_id ;
+    $link .= "&bugid=";
+    $link .= $bugid ;
+    $link .= ">";
+    $link .= $bugid ;
+    $link .= "</a>";
+    return $link;
 }
 
 // get the definitions
